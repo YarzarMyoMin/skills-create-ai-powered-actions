@@ -1,0 +1,44 @@
+name: Rate Joke
+run-name: Rate Joke by ${{ github.event.comment.user.login }}
+
+on:
+    issue_comment:
+        types: [created]
+
+permissions:
+    issues: write
+    contents: read
+
+jobs:
+    joke:
+        name: Rate Joke
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - name: Rate Joke
+              id: rate-joke
+              uses: ./
+              with:
+                  joke: ${{ github.event.comment.body }}
+              env:
+                  PROVIDER_NAME: ${{ secrets.PROVIDER_NAME }}
+                  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+                  OPENROUTER_MODEL: ${{ secrets.OPENROUTER_MODEL }}
+                  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+                  GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+                  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+                  GROQ_MODEL: ${{ secrets.GROQ_MODEL }}
+            - name: Update comment
+              uses: peter-evans/create-or-update-comment@v5
+              with:
+                  comment-id: ${{ github.event.comment.id }}
+                  reactions: laugh
+                  edit-mode: replace
+                  body: |
+                      ## 🤖 AI Joke Rating Results
+
+                      **Your joke:**
+                      > ${{ github.event.comment.body }}
+
+                      **AI Analysis:**
+                      ${{ steps.rate-joke.outputs.result }}
