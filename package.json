@@ -9,6 +9,7 @@
   "type": "commonjs",
   "dependencies": {
     "@actions/core": "^1.11.1",
+    "@google/genai": "^2.16.0",
     "@vercel/ncc": "^0.38.4",
     "openai": "^7.4.0"
   },
