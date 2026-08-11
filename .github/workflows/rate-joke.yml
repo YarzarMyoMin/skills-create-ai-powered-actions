@@ -35,7 +35,7 @@ jobs:
                   reactions: laugh
                   edit-mode: replace
                   body: |
-                      ## 🤖 AI Joke Rating Results
+                      ## 🤖 AI Joke Rating Results(${{ steps.rate-joke.outputs.provider }})
 
                       **Your joke:**
                       > ${{ github.event.comment.body }}

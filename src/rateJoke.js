@@ -57,7 +57,15 @@ async function rateOpenAICompatible(joke, provider, config) {
     ],
   });
 
-  return response.choices[0].message.content;
+  const content = response?.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error(
+      `Invalid response from ${provider}: ${JSON.stringify(response)}`,
+    );
+  }
+
+  return content;
 }
 
 async function rateGemini(joke, config) {

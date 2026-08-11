@@ -9,6 +9,8 @@ inputs:
 outputs:
   result:
     description: "AI-generated joke evaluation"
+  provider:
+    description: "AI provider used for joke evaluation"
 
 runs:
   using: node24

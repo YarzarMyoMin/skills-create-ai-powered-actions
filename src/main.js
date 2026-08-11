@@ -16,6 +16,7 @@ async function run() {
     const rating = await rateJoke(joke, provider);
 
     core.setOutput("result", rating);
+    core.setOutput("provider", provider.toUpperCase());
   } catch (error) {
     core.setFailed(error.message);
   }
