@@ -41,11 +41,24 @@ const PROVIDERS = {
   },
 };
 
-const SYSTEM_PROMPT =
-  "You are a helpful assistant that evaluates jokes. " +
-  "Assess whether the input is actually a joke, and if so, " +
-  "rate its humor quality, creativity, and delivery.";
+// const SYSTEM_PROMPT =
+//   "You are a helpful assistant that evaluates jokes. " +
+//   "Assess whether the input is actually a joke, and if so, " +
+//   "rate its humor quality, creativity, and delivery.";
 // "Respond briefly and include a numeric overall rating from 0–10.";
+
+const SYSTEM_PROMPT = `
+You evaluate jokes.
+Return ONLY a JSON object matching the provided schema.
+Do not use Markdown.
+Do not use code fences.
+Do not add explanations outside the JSON.
+The JSON must contain:
+- is_joke: boolean
+- score: number from 1 to 10, or null if it is not a joke
+- humor_type: string or null
+- feedback: short string or null
+`;
 
 async function rateOpenAICompatible(joke, provider, config) {
   const apiKey = config.apiKey();
@@ -83,15 +96,35 @@ async function rateOpenAICompatible(joke, provider, config) {
   });
 
   // Return the parsed response (automatically validated by Zod)
-  const content = response?.choices?.[0]?.message?.parsed;
+  // const content = response?.choices?.[0]?.message?.parsed;
 
-  if (!content) {
+  // if (!content) {
+  //   throw new Error(
+  //     `Invalid response from ${provider}: ${JSON.stringify(response)}`,
+  //   );
+  // }
+
+  // return content;
+  const message = response?.choices?.[0]?.message;
+
+  if (!message) {
     throw new Error(
       `Invalid response from ${provider}: ${JSON.stringify(response)}`,
     );
   }
 
-  return content;
+  if (message.refusal) {
+    throw new Error(`${provider} refused the request: ${message.refusal}`);
+  }
+
+  if (message.parsed) {
+    return message.parsed;
+  }
+
+  throw new Error(
+    `Provider ${provider} did not return structured JSON. ` +
+      `Response: ${message.content}`,
+  );
 }
 
 async function rateGemini(joke, config) {
