@@ -11,7 +11,8 @@
     "@actions/core": "^1.11.1",
     "@google/genai": "^2.16.0",
     "@vercel/ncc": "^0.38.4",
-    "openai": "^7.4.0"
+    "openai": "^7.4.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@github/local-action": "^6.0.2"

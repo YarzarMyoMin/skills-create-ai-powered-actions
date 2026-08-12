@@ -29,6 +29,7 @@ jobs:
                   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
                   GROQ_MODEL: ${{ secrets.GROQ_MODEL }}
             - name: Update comment
+              if: fromJSON(steps.rate-joke.outputs.result).is_joke == true
               uses: peter-evans/create-or-update-comment@v5
               with:
                   comment-id: ${{ github.event.comment.id }}
@@ -41,4 +42,6 @@ jobs:
                       > ${{ github.event.comment.body }}
 
                       **AI Analysis:**
-                      ${{ steps.rate-joke.outputs.result }}
+                      - **Score:** ${{ fromJSON(steps.rate-joke.outputs.result).score }}/10
+                      - **Humor Type:** ${{ fromJSON(steps.rate-joke.outputs.result).humor_type }}
+                      - **Feedback:** ${{ fromJSON(steps.rate-joke.outputs.result).feedback }}
